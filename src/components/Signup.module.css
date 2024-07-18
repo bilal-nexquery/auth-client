@@ -1,0 +1,46 @@
+.signupWrapper {
+  background-color: #478ccc;
+}
+
+.formWrapper {
+  width: 30rem;
+  background-color: #f5f7f8;
+}
+
+.termsCheckbox input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 10px;
+}
+
+.signUpButton {
+  background-color: #478ccc;
+  color: #f5f7f8;
+  height: 3.5rem;
+}
+
+.signUpButton:hover {
+  background-color: #478ccc;
+  color: #f5f7f8;
+}
+
+.formFooter {
+  width: 30rem;
+}
+
+.inputFields {
+  height: 3rem;
+}
+
+@media only screen and (max-width: 500px) {
+  .formWrapper {
+    max-width: 85%;
+  }
+
+  .formFooter {
+    max-width: 85%;
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+    font-size: 15px;
+  }
+}

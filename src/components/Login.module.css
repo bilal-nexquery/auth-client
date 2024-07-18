@@ -1,0 +1,40 @@
+.LoginWrapper {
+  background-color: #478ccc;
+}
+
+.formWrapper {
+  width: 30rem;
+  background-color: #f5f7f8;
+}
+
+.LoginButton {
+  background-color: #478ccc;
+  color: #f5f7f8;
+  height: 3.5rem;
+}
+
+.LoginButton:hover {
+  background-color: #478ccc;
+  color: #f5f7f8;
+}
+
+.formFooter {
+  width: 30rem;
+}
+
+.inputFields {
+  height: 3rem;
+}
+
+@media only screen and (max-width: 500px) {
+  .formWrapper {
+    max-width: 85%;
+  }
+
+  .formFooter {
+    max-width: 85%;
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+    font-size: 12px;
+  }
+}
