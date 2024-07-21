@@ -77,7 +77,7 @@ function Signup() {
           <div className="toast-container">
             <ToastContainer limit={2} />
           </div>
-          <p className="fs-3 mb-4">Create your account again</p>
+          <p className="fs-3 mb-4">Create your account</p>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formGroupEmail">
               <Form.Label>Email address</Form.Label>
