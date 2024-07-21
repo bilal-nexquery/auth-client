@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./Login.module.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 
 function Login() {
+  const emailRef = useRef(null);
+
+  useEffect(() => {
+    emailRef.current.focus();
+  }, []);
+
   return (
     <>
       <div
@@ -19,15 +25,18 @@ function Login() {
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
+                ref={emailRef}
                 className={`rounded-0 ${styles.inputFeilds}`}
-                placeholder="name@example.com"
                 required
               />
               <Form.Control.Feedback type="invalid">
                 Please enter a valid email.
               </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group className="mb-4" controlId="formGroupPassword1">
+            <Form.Group
+              style={{ marginBottom: "2.5rem" }}
+              controlId="formGroupPassword1"
+            >
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
@@ -46,7 +55,7 @@ function Login() {
         <div className={`container mx-0 px-5 ${styles.formFooter}`}>
           <p className="text-white-50 text-center">
             Don't have an account?
-            <Link to="/register">
+            <Link style={{ textDecoration: "none" }} to="/register">
               <span className="fw-bolder text-light"> Register</span>
             </Link>
           </p>
