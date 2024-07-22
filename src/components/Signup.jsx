@@ -4,9 +4,9 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
+import CustomToastContainer from "../layouts/Toast";
+import { successToast, errorToast } from "../layouts/Toast";
+import { getFirstObjectKey, getFirstObjectPair } from "../utils/object";
 
 function Signup() {
   const navigate = useNavigate();
@@ -19,17 +19,6 @@ function Signup() {
   const [isMatchPassword, setIsMatchPassword] = useState(false);
   const [validated, setValidated] = useState(false);
   const emailRef = useRef(null);
-  const notify = () =>
-    toast.success("Account created successfully", {
-      position: "top-right",
-      autoClose: 4000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
 
   const handleSubmit = async (event) => {
     const form = event.currentTarget;
@@ -45,13 +34,25 @@ function Signup() {
           headers: { "Content-Type": "application/json" },
         });
         if (response.status === 201) {
-          notify();
+          successToast("Account created successfully");
           setTimeout(() => {
             navigate("/");
           }, 1000);
         }
       } catch (err) {
-        console.log(err);
+        const errResponse = err?.response;
+        if (errResponse?.status === 400) {
+          const errorMsg = errResponse?.data?.message;
+          if (errorMsg === "Integrity Error") {
+            const fieldName = getFirstObjectKey(errResponse?.data?.description);
+            errorToast(`Account with this ${fieldName} already exist`);
+          } else if (errorMsg === "Validation error") {
+            const [fieldName, description] = getFirstObjectPair(
+              errResponse?.data?.description
+            );
+            errorToast(`${fieldName} : ${description}`);
+          }
+        }
       }
     }
   };
@@ -75,7 +76,7 @@ function Signup() {
           className={`container shadow d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
         >
           <div className="toast-container">
-            <ToastContainer limit={2} />
+            <CustomToastContainer />
           </div>
           <p className="fs-3 mb-4">Create your account</p>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
