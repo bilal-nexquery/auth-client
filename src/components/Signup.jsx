@@ -51,7 +51,11 @@ function Signup() {
               errResponse?.data?.description
             );
             errorToast(`${fieldName} : ${description}`);
+          } else {
+            errorToast("Unhandled 400 error");
           }
+        } else {
+          errorToast("Server error");
         }
       }
     }
@@ -73,7 +77,7 @@ function Signup() {
         className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.signupWrapper}`}
       >
         <div
-          className={`container shadow d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
+          className={`container shadow mt-5 d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
         >
           <div className="toast-container">
             <CustomToastContainer />
@@ -183,7 +187,7 @@ function Signup() {
           </Form>
         </div>
         <div
-          className={`container d-flex flex-column align-items-center mx-0 px-5 ${styles.formFooter}`}
+          className={`container mb-5 d-flex flex-column align-items-center mx-0 px-5 ${styles.formFooter}`}
         >
           <p className="text-white-50">
             Already have an account?
