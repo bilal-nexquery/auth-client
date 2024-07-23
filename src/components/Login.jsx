@@ -1,15 +1,53 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Login.module.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import axios from "../api/axios";
+import Cookies from "js-cookie";
+import CustomToastContainer, { errorToast } from "../layouts/Toast";
 
 function Login() {
   const emailRef = useRef(null);
+  const [validated, setValidated] = useState();
+  const [userInfo, setUserInfo] = useState({
+    username: "",
+    password: "",
+  });
 
   useEffect(() => {
     emailRef.current.focus();
   }, []);
+
+  const handleSubmit = async (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      setValidated(true);
+    } else {
+      event.preventDefault();
+      setValidated(false);
+      try {
+        const response = await axios.post("/auth/login/", userInfo, {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          Cookies.remove("accessToken", "refreshToken");
+          Cookies.set("accessToken", response?.data?.description?.access);
+          Cookies.set("refreshToken", response?.data?.description?.refresh);
+        }
+      } catch (err) {
+        const errResponse = err?.response;
+        if (errResponse?.status === 404) {
+          errorToast(errResponse?.data?.description);
+        } else {
+          errorToast("Server error");
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -19,18 +57,26 @@ function Login() {
         <div
           className={`container d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
         >
+          <div className="toast-container">
+            <CustomToastContainer />
+          </div>
           <p className="fs-3 mb-4">Login to your Account</p>
-          <Form noValidate>
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>Username or email</Form.Label>
               <Form.Control
-                type="email"
+                type="text"
                 ref={emailRef}
+                value={userInfo.username}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, username: e.target.value })
+                }
                 className={`rounded-0 ${styles.inputFeilds}`}
+                pattern={"^[\\S]{4,}$"}
                 required
               />
               <Form.Control.Feedback type="invalid">
-                Please enter a valid email.
+                Please enter a valid username or email.
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group
@@ -40,9 +86,17 @@ function Login() {
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
+                value={userInfo.password}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, password: e.target.value })
+                }
                 className={`rounded-0 ${styles.inputFeilds}`}
+                pattern={"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid password.
+              </Form.Control.Feedback>
             </Form.Group>
             <Button
               type="submit"

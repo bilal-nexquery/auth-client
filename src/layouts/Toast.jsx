@@ -18,19 +18,19 @@ function CustomToastContainer() {
   );
 }
 
-function successToast(content) {
-  return toast.success(content, {
+const successToast = (content) => {
+  toast.success(content, {
     autoClose: 4000,
     theme: "colored",
   });
-}
+};
 
-function errorToast(content) {
-  return toast.error(content, {
+const errorToast = (content) => {
+  toast.error(content, {
     autoClose: 4000,
     theme: "colored",
   });
-}
+};
 
 export default CustomToastContainer;
 export { successToast, errorToast };
