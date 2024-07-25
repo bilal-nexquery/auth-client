@@ -36,7 +36,7 @@ function Signup() {
         if (response.status === 201) {
           successToast("Account created successfully");
           setTimeout(() => {
-            navigate("/");
+            navigate("/login");
           }, 1000);
         }
       } catch (err) {

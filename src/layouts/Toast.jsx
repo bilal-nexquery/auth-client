@@ -1,4 +1,5 @@
 import "react-toastify/dist/ReactToastify.css";
+import styles from "./Toast.module.css";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 
 function CustomToastContainer() {
@@ -14,6 +15,7 @@ function CustomToastContainer() {
       theme="colored"
       limit={3}
       transition={Bounce}
+      className={`${styles.toastContainer}`}
     />
   );
 }

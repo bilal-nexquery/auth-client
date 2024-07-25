@@ -1,0 +1,10 @@
+.toastContainer {
+  height: 10rem;
+  width: 25rem;
+}
+
+@media only screen and (max-width: 500px) {
+  .toastContainer {
+    min-width: 100%;
+  }
+}
