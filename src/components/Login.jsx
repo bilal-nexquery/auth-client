@@ -2,13 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./Login.module.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import Cookies from "js-cookie";
 import CustomToastContainer, { errorToast } from "../layouts/Toast";
+import useAuth from "../hooks/useAuth";
 
 function Login() {
   const emailRef = useRef(null);
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
   const [validated, setValidated] = useState();
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -34,9 +39,17 @@ function Login() {
           withCredentials: true,
         });
         if (response.status === 200) {
-          Cookies.remove("accessToken", "refreshToken");
           Cookies.set("accessToken", response?.data?.description?.access);
           Cookies.set("refreshToken", response?.data?.description?.refresh);
+          window.localStorage.setItem("isLoggedIn", true);
+          setAuth((prev) => {
+            return {
+              ...prev,
+              accessToken: response.data.description.access,
+              refreshToken: response.data.description.refresh,
+            };
+          });
+          navigate(from, { replace: true });
         }
       } catch (err) {
         const errResponse = err?.response;
