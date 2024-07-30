@@ -191,7 +191,7 @@ function Signup() {
         >
           <p className="text-white-50">
             Already have an account?
-            <Link style={{ textDecoration: "none" }} to="/">
+            <Link style={{ textDecoration: "none" }} to="/login">
               <span className="fw-bolder text-light"> Sign In</span>
             </Link>
           </p>

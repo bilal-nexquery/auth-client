@@ -5,12 +5,16 @@ import Button from "react-bootstrap/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import Cookies from "js-cookie";
-import CustomToastContainer, { errorToast } from "../layouts/Toast";
+import CustomToastContainer, {
+  errorToast,
+  successToast,
+} from "../layouts/Toast";
 import useAuth from "../hooks/useAuth";
+import ForgotPasswordModal from "./modals/ForgotPasswordModal";
 
 function Login() {
   const emailRef = useRef(null);
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
@@ -19,6 +23,13 @@ function Login() {
     username: "",
     password: "",
   });
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleModalSuccessToast = (message) => {
+    successToast(message);
+  };
 
   useEffect(() => {
     emailRef.current.focus();
@@ -76,7 +87,7 @@ function Login() {
           <p className="fs-3 mb-4">Login to your Account</p>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label>Username or email</Form.Label>
+              <Form.Label>Email, or Username</Form.Label>
               <Form.Control
                 type="text"
                 ref={emailRef}
@@ -130,9 +141,17 @@ function Login() {
         <div className={`container mx-0 px-5 ${styles.formFooter}`}>
           <p className="text-white-50 text-center">
             Forgotten your password?
-            <span className="fw-bolder text-light"> Recover password</span>
+            <span onClick={handleShowModal} className="fw-bolder text-light">
+              {" "}
+              Recover password
+            </span>
           </p>
         </div>
+        <ForgotPasswordModal
+          showModal={showModal}
+          handleCloseModal={handleCloseModal}
+          handleModalSuccessToast={handleModalSuccessToast}
+        />
       </div>
     </>
   );
