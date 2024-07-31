@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import ResetPassword from "./components/ResetPassword";
 
 import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route element={<Login />} path="/login" />
             <Route element={<Signup />} path="/register" />
             <Route element={<ResetPassword />} path="/reset-password/:token" />
+            <Route element={<NotFound />} path="*" />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

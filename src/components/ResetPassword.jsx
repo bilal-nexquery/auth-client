@@ -13,7 +13,7 @@ function ResetPassword() {
   const [validated, setValidated] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const passwordRef = useRef();
+  const passwordRef = useRef(null);
   const navigate = useNavigate();
 
   const { token } = useParams();
