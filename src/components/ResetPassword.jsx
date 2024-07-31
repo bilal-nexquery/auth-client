@@ -8,20 +8,43 @@ import CustomToastContainer, {
 import { Button, Form } from "react-bootstrap";
 import axios from "../api/axios";
 import { getFirstObjectPair } from "../utils/object";
+import InvalidResetPasswordLink from "./InvalidResetPasswordLink";
 
 function ResetPassword() {
   const [validated, setValidated] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const passwordRef = useRef(null);
   const navigate = useNavigate();
 
   const { token } = useParams();
 
   const [isMatchPassword, setIsMatchPassword] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+  const [invalidLinkMsg, setInvalidLinkMsg] = useState("");
 
   useEffect(() => {
-    passwordRef.current.focus();
+    const validateLink = async () => {
+      try {
+        const response = await axios.get(
+          `auth/validate/reset-password/${token}/`,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setShowContent(true);
+      } catch (error) {
+        const errResponse = error?.response;
+        if (errResponse?.status === 400) {
+          setInvalidLinkMsg(errResponse?.data?.description[0]);
+        } else if (errResponse?.status === 404) {
+          setInvalidLinkMsg(errResponse?.data?.description);
+        } else {
+          setInvalidLinkMsg("Server error");
+        }
+        setShowContent(false);
+      }
+    };
+    validateLink();
   }, []);
 
   useEffect(() => {
@@ -81,67 +104,71 @@ function ResetPassword() {
 
   return (
     <>
-      <div
-        className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.ResetPasswordWrapper}`}
-      >
+      {showContent ? (
         <div
-          className={`container d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
+          className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.ResetPasswordWrapper}`}
         >
-          <div className="toast-container">
-            <CustomToastContainer />
+          <div
+            className={`container d-flex flex-column mx-0 mb-4 px-5 py-5 ${styles.formWrapper}`}
+          >
+            <div className="toast-container">
+              <CustomToastContainer />
+            </div>
+            <p className="fs-3 mb-4">Change your Account password</p>
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formGroupPassword1">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  autoFocus
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`rounded-0 ${styles.inputFeilds}`}
+                  pattern={"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"}
+                  required
+                />
+                <Form.Text id="passwordHelpBlock" className="text-muted">
+                  Your password must be 8-20 characters long, include letters
+                  and numbers
+                </Form.Text>
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid password.
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group
+                style={{ marginBottom: "2.5rem" }}
+                controlId="formGroupPassword2"
+              >
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`rounded-0 ${styles.inputFeilds}`}
+                  pattern={"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"}
+                  isInvalid={showMatchPasswordError}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  {!isMatchPassword ? (
+                    <p>Both password must match.</p>
+                  ) : (
+                    <p>Please enter a valid password.</p>
+                  )}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Button
+                type="submit"
+                className={`w-100 rounded-1 ${styles.ChangePasswordButton}`}
+              >
+                Change password
+              </Button>
+            </Form>
           </div>
-          <p className="fs-3 mb-4">Change your Account password</p>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="formGroupPassword1">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                ref={passwordRef}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`rounded-0 ${styles.inputFeilds}`}
-                pattern={"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"}
-                required
-              />
-              <Form.Text id="passwordHelpBlock" className="text-muted">
-                Your password must be 8-20 characters long, include letters and
-                numbers
-              </Form.Text>
-              <Form.Control.Feedback type="invalid">
-                Please enter a valid password.
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group
-              style={{ marginBottom: "2.5rem" }}
-              controlId="formGroupPassword2"
-            >
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`rounded-0 ${styles.inputFeilds}`}
-                pattern={"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"}
-                isInvalid={showMatchPasswordError}
-                required
-              />
-              <Form.Control.Feedback type="invalid">
-                {!isMatchPassword ? (
-                  <p>Both password must match.</p>
-                ) : (
-                  <p>Please enter a valid password.</p>
-                )}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Button
-              type="submit"
-              className={`w-100 rounded-1 ${styles.ChangePasswordButton}`}
-            >
-              Change password
-            </Button>
-          </Form>
         </div>
-      </div>
+      ) : (
+        <InvalidResetPasswordLink message={invalidLinkMsg} />
+      )}
     </>
   );
 }
