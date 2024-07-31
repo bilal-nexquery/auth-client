@@ -22,7 +22,7 @@ function Signup() {
 
   const handleSubmit = async (event) => {
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+    if (form.checkValidity() === false || !isMatchPassword) {
       event.preventDefault();
       event.stopPropagation();
       setValidated(true);

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import RequireAuth from "./context/RequireAuth";
 import { AuthProvider } from "./context/AuthProvider";
+import ResetPassword from "./components/ResetPassword";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,6 +20,7 @@ function App() {
             </Route>
             <Route element={<Login />} path="/login" />
             <Route element={<Signup />} path="/register" />
+            <Route element={<ResetPassword />} path="/reset-password/:token" />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
