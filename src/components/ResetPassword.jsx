@@ -108,8 +108,13 @@ function ResetPassword() {
 
   return (
     <>
-      {showLoader && <CircularProgress variant="solid" size="lg" />}
-      {showContent ? (
+      {showLoader ? (
+        <div
+          className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.ResetPasswordWrapper}`}
+        >
+          <CircularProgress variant="solid" size="lg" />{" "}
+        </div>
+      ) : showContent ? (
         <div
           className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.ResetPasswordWrapper}`}
         >
