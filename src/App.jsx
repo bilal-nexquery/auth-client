@@ -21,7 +21,7 @@ function App() {
             </Route>
             <Route element={<Login />} path="/login" />
             <Route element={<Signup />} path="/register" />
-            <Route element={<ResetPassword />} path="/reset-password/:token" />
+            <Route element={<ResetPassword />} path="/reset-password/:token/" />
             <Route element={<NotFound />} path="*" />
           </Routes>
         </AuthProvider>
