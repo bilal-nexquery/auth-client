@@ -9,17 +9,20 @@ import { Button, Form } from "react-bootstrap";
 import axios from "../api/axios";
 import { getFirstObjectPair } from "../utils/object";
 import InvalidResetPasswordLink from "./InvalidResetPasswordLink";
+import { CircularProgress } from "@mui/joy";
 
 function ResetPassword() {
   const [validated, setValidated] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showContent, setShowContent] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
+
   const navigate = useNavigate();
 
   const { token } = useParams();
 
   const [isMatchPassword, setIsMatchPassword] = useState(false);
-  const [showContent, setShowContent] = useState(false);
   const [invalidLinkMsg, setInvalidLinkMsg] = useState("");
 
   useEffect(() => {
@@ -43,6 +46,7 @@ function ResetPassword() {
         }
         setShowContent(false);
       }
+      setShowLoader(false);
     };
     validateLink();
   }, []);
@@ -104,6 +108,7 @@ function ResetPassword() {
 
   return (
     <>
+      {showLoader && <CircularProgress variant="solid" size="lg" />}
       {showContent ? (
         <div
           className={`container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center overflow-auto ${styles.ResetPasswordWrapper}`}
