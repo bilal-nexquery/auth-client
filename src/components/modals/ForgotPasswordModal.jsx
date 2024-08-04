@@ -48,10 +48,12 @@ const ForgotPasswordModal = ({
         }
       } catch (error) {
         const errResponse = error?.response;
+        setLoader(false);
+        setValidated(true);
         if (errResponse?.status === 404) {
-          setLoader(false);
-          setValidated(true);
           setErrMsg(errResponse?.data?.description);
+        } else {
+          setErrMsg("Server error");
         }
       }
     }
