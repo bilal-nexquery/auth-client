@@ -1,8 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Login.module.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "../api/axios";
 import Cookies from "js-cookie";
 import CustomToastContainer, {
@@ -10,7 +16,14 @@ import CustomToastContainer, {
   successToast,
 } from "../layouts/Toast";
 import useAuth from "../hooks/useAuth";
+import Divider from "@mui/joy/Divider";
+import Chip from "@mui/joy/Chip";
 import ForgotPasswordModal from "./modals/ForgotPasswordModal";
+import GoogleButton from "react-google-button";
+
+const REACT_APP_GOOGLE_CLIENT_ID = import.meta.env
+  .VITE_REACT_APP_GOOGLE_CLIENT_ID;
+const BASE_BACKEND_URL = import.meta.env.VITE_DJANGO_APP_BASE_URL;
 
 function Login() {
   const emailRef = useRef(null);
@@ -27,12 +40,47 @@ function Login() {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  const [searchParams] = useSearchParams();
+
   const handleModalSuccessToast = (message) => {
     successToast(message);
   };
 
   useEffect(() => {
+    if (searchParams.has("type")) {
+      const type = searchParams.get("type");
+      const error = searchParams.get("error");
+      if (type === "oAuth") {
+        errorToast(error);
+      }
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     emailRef.current.focus();
+  }, []);
+
+  const openGoogleLoginPage = useCallback(() => {
+    const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const redirectUri = "auth/social/google/";
+
+    const scope = [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" ");
+
+    const params = {
+      response_type: "code",
+      client_id: REACT_APP_GOOGLE_CLIENT_ID,
+      redirect_uri: `${BASE_BACKEND_URL}/${redirectUri}`,
+      prompt: "select_account",
+      access_type: "offline",
+      scope,
+    };
+
+    const urlParams = new URLSearchParams(params).toString();
+
+    window.location = `${googleAuthUrl}?${urlParams}`;
   }, []);
 
   const handleSubmit = async (event) => {
@@ -104,8 +152,8 @@ function Login() {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group
-              style={{ marginBottom: "2.5rem" }}
               controlId="formGroupPassword1"
+              style={{ marginBottom: "2rem" }}
             >
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -125,9 +173,24 @@ function Login() {
             <Button
               type="submit"
               className={`w-100 rounded-1 ${styles.LoginButton}`}
+              style={{ marginBottom: "2rem" }}
             >
               Login
             </Button>
+            <Divider style={{ marginBottom: "1rem" }}>
+              <Chip variant="soft" color="neutral" size="sm">
+                OR
+              </Chip>
+            </Divider>
+            <div
+              className={`container d-flex align-items-center justify-content-center`}
+            >
+              <GoogleButton
+                label="Login with Google"
+                type="dark"
+                onClick={openGoogleLoginPage}
+              />
+            </div>
           </Form>
         </div>
         <div className={`container mx-0 px-5 ${styles.formFooter}`}>
